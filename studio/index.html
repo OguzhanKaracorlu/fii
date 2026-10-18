@@ -121,7 +121,7 @@
   <section id="post" class="tab hidden">
     <div class="row">
       <input type="date" id="postDate">
-      <label class="row"><input type="checkbox" id="postLink" checked> Metne uygulama bağlantısı ekle</label>
+      <label class="row"><input type="checkbox" id="postLink" checked> Metne uygulama satırı ekle</label>
     </div>
     <div id="postEvents"></div>
     <div class="previews" id="previews"></div>
@@ -138,7 +138,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // Public values (the same as the app's .env.local). No secret key here: the database checks editors itself.
 const SUPABASE_URL = 'https://slopnbekwhkivhxvnruk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_FqoSjZFMXWSYZ3Hh6TVXwA_8R3zctnZ';
-const SITE = 'oguzhankaracorlu.github.io/fii';
+const STORES = "App Store ve Google Play'de: Fii"; // no website address on shared images
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const STATUS = { published: 'Yayında', review: 'Bekliyor', draft: 'Gizli' };
 
@@ -464,7 +464,7 @@ function drawSingle(canvas, e, date, format) {
     const y0 = 450 - (box.lines.length * lh) / 2 + box.size;
     box.lines.forEach((l, i) => ctx.fillText(l, 770, y0 + i * lh));
     ctx.fillStyle = C.muted; ctx.font = `600 26px ${SANS}`;
-    ctx.fillText(`Her gün 5 tarih bilmecesi · Fii · ${SITE}`, pad, H - 60);
+    ctx.fillText(`Her gün 5 tarih bilmecesi · ${STORES}`, pad, H - 60);
     return;
   }
 
@@ -486,7 +486,7 @@ function drawSingle(canvas, e, date, format) {
   if (story) { ctx.beginPath(); ctx.roundRect(pad, by, W - 2 * pad, 200, 36); ctx.fill(); } else ctx.fillRect(0, by, W, band);
   ctx.fillStyle = C.white; ctx.textAlign = 'center';
   ctx.font = `800 ${story ? 46 : 40}px ${SANS}`; ctx.fillText('Her gün 5 tarih bilmecesi', cx, by + (story ? 90 : 68));
-  ctx.font = `600 ${story ? 32 : 28}px ${SANS}`; ctx.globalAlpha = 0.9; ctx.fillText(`Fii · ${SITE}`, cx, by + (story ? 145 : 112)); ctx.globalAlpha = 1;
+  ctx.font = `600 ${story ? 32 : 28}px ${SANS}`; ctx.globalAlpha = 0.9; ctx.fillText(STORES, cx, by + (story ? 145 : 112)); ctx.globalAlpha = 1;
 }
 
 function drawList(canvas, events, date) {
@@ -512,7 +512,7 @@ function drawList(canvas, events, date) {
   }
   ctx.fillStyle = C.accent; ctx.fillRect(0, H - 130, W, 130);
   ctx.fillStyle = C.white; ctx.textAlign = 'center';
-  const foot = `Her gün 5 tarih bilmecesi · Fii · ${SITE}`;
+  const foot = `Her gün 5 tarih bilmecesi · ${STORES}`;
   let fs = 38;
   do { ctx.font = `800 ${fs}px ${SANS}`; } while (ctx.measureText(foot).width > W - 144 && --fs > 20);
   ctx.fillText(foot, W / 2, H - 52);
@@ -576,7 +576,7 @@ async function renderPost() {
     fig.append(canvas, cap);
     $('previews').append(fig);
   }
-  const link = $('postLink').checked ? `\n\nHer gün 5 tarih bilmecesi için Fii: ${SITE}` : '';
+  const link = $('postLink').checked ? `\n\nHer gün 5 tarih bilmecesi: Fii, App Store ve Google Play'de.` : '';
   $('caption').value = `📜 ${date} ${fmtYear(e.year)}\n\n${e.title}${link}\n\n#tarihtebugün #tarih #türktarihi #fiitarih`;
 }
 
