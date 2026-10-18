@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fii Stüdyo</title>
+<link rel="icon" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #1f1a14; --muted: #6b6155; --bg: #f6f1e7; --card: #fffcf6; --element: #ece4d4;
+    --border: #d8ccb6; --accent: #a23b24; --on-accent: #fff; --ok: #2f7d4f; --warn: #c4a032;
+    --serif: Lora, Georgia, serif; --sans: Inter, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --text: #f3ede2; --muted: #b3a895; --bg: #14110d; --card: #1b1712; --element: #221d17;
+      --border: #3a3228; --accent: #e0745a; --on-accent: #14110d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 var(--sans); }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  header img { width: 36px; height: 36px; border-radius: 9px; }
+  header h1 { font: 700 22px var(--serif); margin: 0; }
+  header .who { margin-left: auto; color: var(--muted); font-size: 13px; }
+  nav { display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; border-bottom: 1px solid var(--border); }
+  nav button { white-space: nowrap; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  button, .btn { font: 600 14px var(--sans); border: 1px solid var(--border); background: var(--card); color: var(--text);
+    border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  button.danger { color: #b83a2e; }
+  button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+  button:disabled { opacity: .5; cursor: default; }
+  input, select, textarea { font: 15px var(--sans); color: var(--text); background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px 10px; }
+  textarea { width: 100%; min-height: 64px; resize: vertical; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin: 10px 0; }
+  .event { display: grid; grid-template-columns: 70px 1fr; gap: 10px; }
+  .year { font: 700 22px var(--serif); color: var(--accent); }
+  .title { font: 600 16px var(--serif); }
+  .en { color: var(--muted); font-size: 13px; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .tag { font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 8px; background: var(--element); color: var(--muted); }
+  .tag.published { background: #2f7d4f22; color: var(--ok); }
+  .tag.review { background: #c4a03233; color: #8a6d12; }
+  .tag.sensitive { background: #b83a2e22; color: #b83a2e; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .muted { color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .stat { font: 700 28px var(--serif); }
+  .days { display: flex; flex-wrap: wrap; gap: 6px; }
+  .days button { padding: 4px 8px; font-size: 13px; }
+  form.edit { display: grid; gap: 8px; margin-top: 10px; }
+  form.edit label { font-size: 12px; font-weight: 700; color: var(--muted); display: grid; gap: 4px; }
+  form.edit label.row { display: flex; font-size: 14px; font-weight: 500; color: var(--text); }
+  .previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start; }
+  .previews figure { margin: 0; }
+  .previews canvas { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); background: #fff; }
+  figcaption { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 6px; }
+  .msg { padding: 10px 12px; border-radius: 10px; background: var(--element); margin: 10px 0; }
+  .msg.error { background: #b83a2e22; color: #b83a2e; }
+  code { background: var(--element); padding: 2px 6px; border-radius: 6px; font-size: 13px; }
+  pre { background: var(--element); padding: 10px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; }
+  .hidden { display: none !important; }
+  @media (max-width: 560px) { .event { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <img src="../icon.png" alt="">
+  <h1>Fii Stüdyo</h1>
+  <span class="who" id="who"></span>
+  <button id="signout" class="hidden">Çıkış</button>
+</header>
+<nav id="tabs" class="hidden">
+  <button data-tab="overview" class="on">Özet</button>
+  <button data-tab="day">Gün</button>
+  <button data-tab="review">İnceleme</button>
+  <button data-tab="search">Ara</button>
+  <button data-tab="new">Yeni olay</button>
+  <button data-tab="post">Günün paylaşımı</button>
+</nav>
+<main>
+  <section id="login" class="card hidden">
+    <h2 style="font-family: var(--serif); margin-top: 0">Editör girişi</h2>
+    <p>Uygulamada bağladığın Google hesabıyla giriş yap. Yalnızca editör listesindeki hesaplar işlem yapabilir.</p>
+    <button class="primary" id="google">Google ile giriş yap</button>
+  </section>
+  <section id="noteditor" class="card hidden"></section>
+
+  <section id="overview" class="tab hidden"></section>
+
+  <section id="day" class="tab hidden">
+    <div class="row">
+      <input type="date" id="dayDate">
+      <button id="dayPrev">‹</button><button id="dayNext">›</button>
+      <span class="muted" id="dayInfo"></span>
+    </div>
+    <div id="dayList"></div>
+  </section>
+
+  <section id="review" class="tab hidden">
+    <p class="muted">Hassas olaylar (savaş, katliam, afet, darbe…) yayına girmeden önce burada bekler. Yayınlananlar Tarihte Bugün'de görünür; bilmecelere, günün olayına ve bildirimlere hiçbir zaman girmez.</p>
+    <div id="reviewList"></div>
+    <div class="row"><button id="reviewMore">Daha fazla</button></div>
+  </section>
+
+  <section id="search" class="tab hidden">
+    <div class="row"><input id="q" placeholder="Başlıkta ara (en az 3 harf)" style="flex:1"><button id="qGo" class="primary">Ara</button></div>
+    <div id="searchList"></div>
+  </section>
+
+  <section id="new" class="tab hidden"><div class="card" id="newForm"></div></section>
+
+  <section id="post" class="tab hidden">
+    <div class="row">
+      <input type="date" id="postDate">
+      <label class="row"><input type="checkbox" id="postLink" checked> Metne uygulama bağlantısı ekle</label>
+    </div>
+    <div id="postEvents"></div>
+    <div class="previews" id="previews"></div>
+    <h3 style="font-family: var(--serif)">Metin</h3>
+    <textarea id="caption" rows="8"></textarea>
+    <div class="row"><button id="copyCaption">Metni kopyala</button><span class="muted" id="copied"></span></div>
+  </section>
+  <div id="flash"></div>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm';
+
+// Public values (the same as the app's .env.local). No secret key here: the database checks editors itself.
+const SUPABASE_URL = 'https://slopnbekwhkivhxvnruk.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_FqoSjZFMXWSYZ3Hh6TVXwA_8R3zctnZ';
+const SITE = 'oguzhankaracorlu.github.io/fii';
+const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+const STATUS = { published: 'Yayında', review: 'Bekliyor', draft: 'Gizli' };
+
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'pkce' } });
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const fmtYear = (y) => (y < 0 ? `MÖ ${-y}` : String(y));
+const dayLabel = (m, d) => `${d} ${MONTHS[m - 1]}`;
+// "18 Ekim'de", "1 Mart'ta", "5 Nisan'da"
+const LOCATIVE = ['ta', 'ta', 'ta', 'da', 'ta', 'da', 'da', 'ta', 'de', 'de', 'da', 'ta'];
+const iso = (d) => d.toISOString().slice(0, 10);
+const md = (value) => ({ month: Number(value.slice(5, 7)), day: Number(value.slice(8, 10)) });
+
+function flash(text, error = false) {
+  const el = document.createElement('div');
+  el.className = 'msg' + (error ? ' error' : '');
+  el.textContent = text;
+  $('flash').prepend(el);
+  setTimeout(() => el.remove(), error ? 8000 : 3500);
+}
+
+async function rpc(fn, args = {}) {
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) { flash(`${fn}: ${error.message}`, true); throw error; }
+  return data;
+}
+
+// ---------------------------------------------------------------- sign-in
+async function start() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session || session.user.is_anonymous) {
+    $('login').classList.remove('hidden');
+    return;
+  }
+  $('who').textContent = session.user.email ?? session.user.id;
+  $('signout').classList.remove('hidden');
+  const { data: editor } = await sb.rpc('is_editor');
+  if (!editor) {
+    $('noteditor').classList.remove('hidden');
+    $('noteditor').innerHTML = `<h2 style="font-family:var(--serif);margin-top:0">Editör değilsin</h2>
+      <p>Bu hesabı editör yapmak için Supabase SQL Editor'da bir kez çalıştır:</p>
+      <pre>insert into public.editors (user_id) values ('${esc(session.user.id)}');</pre>
+      <p class="muted">Sonra bu sayfayı yenile.</p>`;
+    return;
+  }
+  $('tabs').classList.remove('hidden');
+  show('overview');
+}
+
+$('google').onclick = () =>
+  sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+$('signout').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+// ---------------------------------------------------------------- tabs
+const loaders = {};
+function show(tab) {
+  document.querySelectorAll('.tab').forEach((s) => s.classList.toggle('hidden', s.id !== tab));
+  document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
+  loaders[tab]?.();
+}
+document.querySelectorAll('#tabs button').forEach((b) => (b.onclick = () => show(b.dataset.tab)));
+
+// ---------------------------------------------------------------- event rows
+function eventHtml(e) {
+  const tags = [
+    `<span class="tag ${e.status}">${STATUS[e.status] ?? e.status}</span>`,
+    e.is_sensitive ? '<span class="tag sensitive">Hassas</span>' : '',
+    `<span class="tag">Önem ${e.importance}</span>`,
+    ...e.regions.map((r) => `<span class="tag">${r === 'WORLD' ? 'Dünya' : r}</span>`),
+    e.kind !== 'event' ? `<span class="tag">${e.kind === 'birth' ? 'Doğum' : 'Ölüm'}</span>` : '',
+    e.pinned ? '<span class="tag published">★ Günün olayı</span>' : '',
+    e.external_key?.startsWith('fiitarih:') ? '<span class="tag">@fiitarih</span>' : '',
+    e.locked ? '<span class="tag">Kilitli</span>' : '',
+  ].join('');
+  return `<div class="card" data-id="${e.id}">
+    <div class="event">
+      <div><div class="year">${esc(fmtYear(e.year))}</div><div class="muted" style="font-size:12px">${dayLabel(e.month, e.day)}</div></div>
+      <div>
+        <div class="title">${esc(e.title_tr ?? '(Türkçe başlık yok)')}</div>
+        <div class="en">${esc(e.title_en ?? '')}</div>
+        <div class="tags">${tags}</div>
+        <div class="actions">
+          <button data-act="edit">Düzenle</button>
+          ${e.status !== 'published' ? '<button data-act="publish" class="primary">Yayınla</button>' : '<button data-act="hold">Beklet</button>'}
+          ${e.status !== 'draft' ? '<button data-act="hide">Gizle</button>' : ''}
+          ${e.status === 'published' && !e.is_sensitive ? `<button data-act="pin">${e.pinned ? 'Günün olayından çıkar' : '★ Günün olayı yap'}</button>` : ''}
+          ${e.source_url ? `<a class="btn" href="${esc(e.source_url)}" target="_blank" rel="noopener">Kaynak</a>` : ''}
+          ${e.wikidata_id ? `<a class="btn" href="https://www.wikidata.org/wiki/${esc(e.wikidata_id)}" target="_blank" rel="noopener">Wikidata</a>` : ''}
+          <button data-act="delete" class="danger">Sil</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderList(container, rows, reload) {
+  container.innerHTML = rows.length ? rows.map(eventHtml).join('') : '<p class="muted">Kayıt yok.</p>';
+  container.querySelectorAll('.card[data-id]').forEach((card) => {
+    const e = rows.find((r) => String(r.id) === card.dataset.id);
+    card.querySelectorAll('[data-act]').forEach((btn) => (btn.onclick = async () => {
+      const act = btn.dataset.act;
+      if (act === 'edit') return openEditor(card, e, reload);
+      if (act === 'publish') await rpc('editor_set_status', { p_ids: [e.id], p_status: 'published' });
+      if (act === 'hold') await rpc('editor_set_status', { p_ids: [e.id], p_status: 'review' });
+      if (act === 'hide') await rpc('editor_set_status', { p_ids: [e.id], p_status: 'draft' });
+      if (act === 'pin') await rpc('editor_pin', { p_month: e.month, p_day: e.day, p_region: e.regions.includes('TR') ? 'TR' : 'WORLD', p_event_id: e.pinned ? null : e.id });
+      if (act === 'delete') {
+        if (!confirm(`Silinsin mi?\n\n${e.year} · ${e.title_tr ?? e.title_en}`)) return;
+        await rpc('editor_delete_event', { p_id: e.id });
+      }
+      flash('Kaydedildi.');
+      reload();
+    }));
+  });
+}
+
+function formHtml(e) {
+  const v = e ?? { year: '', month: '', day: '', importance: 3, is_sensitive: false, status: 'published', regions: ['TR'], kind: 'event', title_tr: '', title_en: '', source_url: '' };
+  return `<form class="edit">
+    <div class="row">
+      <label>Yıl (MÖ için eksi)<input name="year" type="number" value="${esc(v.year)}" required style="width:110px"></label>
+      <label>Ay<input name="month" type="number" min="1" max="12" value="${esc(v.month)}" required style="width:70px"></label>
+      <label>Gün<input name="day" type="number" min="1" max="31" value="${esc(v.day)}" required style="width:70px"></label>
+      <label>Önem<select name="importance">${[1, 2, 3, 4, 5].map((n) => `<option ${n == v.importance ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      <label>Tür<select name="kind">${[['event', 'Olay'], ['birth', 'Doğum'], ['death', 'Ölüm']].map(([k, l]) => `<option value="${k}" ${k === v.kind ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <label>Durum<select name="status">${Object.entries(STATUS).map(([k, l]) => `<option value="${k}" ${k === v.status ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+    </div>
+    <label>Türkçe başlık<textarea name="title_tr" required>${esc(v.title_tr)}</textarea></label>
+    <label>English title<textarea name="title_en">${esc(v.title_en)}</textarea></label>
+    <div class="row">
+      <label class="row"><input type="checkbox" name="sensitive" ${v.is_sensitive ? 'checked' : ''}> Hassas (bilmecelere girmez)</label>
+      <label class="row"><input type="checkbox" name="tr" ${v.regions.includes('TR') ? 'checked' : ''}> Türkiye</label>
+      <label class="row"><input type="checkbox" name="world" ${v.regions.includes('WORLD') ? 'checked' : ''}> Dünya</label>
+    </div>
+    <label>Kaynak bağlantısı<input name="source_url" value="${esc(v.source_url ?? '')}" placeholder="https://"></label>
+    <div class="row"><button class="primary" type="submit">Kaydet</button>${e ? '<button type="button" data-cancel>Vazgeç</button>' : ''}</div>
+  </form>`;
+}
+
+function readForm(form, e) {
+  const f = new FormData(form);
+  const regions = [...(f.get('tr') ? ['TR'] : []), ...(f.get('world') ? ['WORLD'] : []),
+    ...(e?.regions ?? []).filter((r) => r !== 'TR' && r !== 'WORLD')];
+  return {
+    year: Number(f.get('year')), month: Number(f.get('month')), day: Number(f.get('day')),
+    importance: Number(f.get('importance')), kind: f.get('kind'), status: f.get('status'),
+    sensitive: !!f.get('sensitive'), regions: regions.length ? regions : ['TR'],
+    title_tr: f.get('title_tr'), title_en: f.get('title_en'), source_url: f.get('source_url'),
+  };
+}
+
+function openEditor(card, e, reload) {
+  const holder = document.createElement('div');
+  holder.innerHTML = formHtml(e);
+  card.querySelector('.actions').replaceWith(holder);
+  const form = holder.querySelector('form');
+  form.querySelector('[data-cancel]').onclick = reload;
+  form.onsubmit = async (ev) => {
+    ev.preventDefault();
+    await rpc('editor_save_event', { p_id: e.id, p: readForm(form, e) });
+    flash('Kaydedildi.');
+    reload();
+  };
+}
+
+// ---------------------------------------------------------------- overview
+loaders.overview = async () => {
+  const o = await rpc('editor_overview');
+  $('overview').innerHTML = `
+    <div class="grid2">
+      <div class="card"><div class="stat">${o.published.toLocaleString('tr-TR')}</div><div class="muted">yayındaki olay</div></div>
+      <div class="card"><div class="stat">${o.review_sensitive}</div><div class="muted">incelemede bekleyen hassas olay</div></div>
+      <div class="card"><div class="stat">${o.empty_tr_days.length}</div><div class="muted">Türkiye olayı olmayan gün</div></div>
+      <div class="card"><div class="stat">${o.panel}</div><div class="muted">panelden eklenen olay</div></div>
+    </div>
+    <div class="card"><h3 style="font-family:var(--serif);margin-top:0">Türkiye olayı olmayan günler</h3>
+      <p class="muted">Bir güne tıkla, o günü aç ve olay ekle.</p>
+      <div class="days">${o.empty_tr_days.map((d) => `<button data-d="${d}">${dayLabel(Number(d.slice(0, 2)), Number(d.slice(3)))}</button>`).join('') || '<span class="muted">Hepsi dolu.</span>'}</div>
+    </div>`;
+  $('overview').querySelectorAll('[data-d]').forEach((b) => (b.onclick = () => {
+    $('dayDate').value = `2024-${b.dataset.d}`;
+    show('day');
+  }));
+};
+
+// ---------------------------------------------------------------- day
+$('dayDate').value = iso(new Date());
+const shiftDay = (n) => { const d = new Date($('dayDate').value + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); $('dayDate').value = iso(d); loaders.day(); };
+$('dayPrev').onclick = () => shiftDay(-1);
+$('dayNext').onclick = () => shiftDay(1);
+$('dayDate').onchange = () => loaders.day();
+loaders.day = async () => {
+  const { month, day } = md($('dayDate').value);
+  const rows = await rpc('editor_day', { p_month: month, p_day: day });
+  const tr = rows.filter((r) => r.status === 'published' && r.regions.includes('TR')).length;
+  $('dayInfo').textContent = `${dayLabel(month, day)}: ${rows.length} kayıt, ${tr} yayında Türkiye olayı`;
+  const add = document.createElement('div');
+  add.className = 'card';
+  add.innerHTML = `<b>Bu güne olay ekle</b>${formHtml({ year: '', month, day, importance: 3, is_sensitive: false, status: 'published', regions: ['TR'], kind: 'event', title_tr: '', title_en: '', source_url: '' })}`;
+  const list = document.createElement('div');
+  $('dayList').replaceChildren(add, list);
+  add.querySelector('form').onsubmit = async (ev) => {
+    ev.preventDefault();
+    await rpc('editor_save_event', { p_id: null, p: readForm(ev.target) });
+    flash('Olay eklendi.');
+    loaders.day();
+  };
+  renderList(list, rows, loaders.day);
+};
+
+// ---------------------------------------------------------------- review queue
+let reviewOffset = 0;
+loaders.review = async (more = false) => {
+  reviewOffset = more ? reviewOffset + 50 : 0;
+  const rows = await rpc('editor_review_queue', { p_limit: 50, p_offset: reviewOffset });
+  if (!more) $('reviewList').innerHTML = '';
+  const box = document.createElement('div');
+  $('reviewList').append(box);
+  renderList(box, rows, () => loaders.review());
+  $('reviewMore').disabled = rows.length < 50;
+};
+$('reviewMore').onclick = () => loaders.review(true);
+
+// ---------------------------------------------------------------- search
+const runSearch = async () => {
+  const rows = await rpc('editor_search', { p_query: $('q').value, p_limit: 100 });
+  renderList($('searchList'), rows, runSearch);
+};
+$('qGo').onclick = runSearch;
+$('q').onkeydown = (e) => { if (e.key === 'Enter') runSearch(); };
+
+// ---------------------------------------------------------------- new event
+loaders.new = () => {
+  $('newForm').innerHTML = '<b>Yeni olay</b>' + formHtml(null);
+  $('newForm').querySelector('form').onsubmit = async (ev) => {
+    ev.preventDefault();
+    await rpc('editor_save_event', { p_id: null, p: readForm(ev.target) });
+    flash('Olay eklendi.');
+    loaders.new();
+  };
+};
+
+// ---------------------------------------------------------------- daily post (Instagram / X)
+const C = { bg: '#F6F1E7', card: '#FFFCF6', border: '#D8CCB6', text: '#1F1A14', muted: '#6B6155', accent: '#A23B24', white: '#FFFFFF' };
+const SERIF = 'Lora, Georgia, serif';
+const SANS = 'Inter, system-ui, sans-serif';
+const icon = new Image();
+icon.src = '../icon.png';
+const fontsReady = Promise.all([
+  document.fonts.load(`700 80px Lora`), document.fonts.load(`600 40px Lora`),
+  document.fonts.load(`700 30px Inter`), document.fonts.load(`800 30px Inter`),
+]).catch(() => {});
+
+function wrap(ctx, text, maxWidth) {
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; } else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+/** Largest font size (down to min) at which the text fits in maxLines. */
+function fitText(ctx, text, weightFamily, size, min, maxWidth, maxLines) {
+  for (let s = size; s >= min; s -= 2) {
+    ctx.font = `${weightFamily.replace('{s}', s)}`;
+    const lines = wrap(ctx, text, maxWidth);
+    if (lines.length <= maxLines) return { size: s, lines };
+  }
+  ctx.font = weightFamily.replace('{s}', min);
+  return { size: min, lines: wrap(ctx, text, maxWidth).slice(0, maxLines) };
+}
+
+function spaced(ctx, text, x, y, spacing, align = 'center') {
+  const chars = [...text];
+  const width = chars.reduce((w, ch) => w + ctx.measureText(ch).width + spacing, -spacing);
+  let cx = align === 'center' ? x - width / 2 : x;
+  ctx.textAlign = 'left';
+  for (const ch of chars) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + spacing; }
+}
+
+function brand(ctx, x, y, size) {
+  if (icon.complete && icon.naturalWidth) {
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(x, y, size, size, size * 0.22); ctx.clip();
+    ctx.drawImage(icon, x, y, size, size);
+    ctx.restore();
+  }
+  ctx.fillStyle = C.text; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 ${size * 0.62}px ${SERIF}`;
+  ctx.fillText('Fii', x + size * 1.18, y + size * 0.6);
+  ctx.fillStyle = C.muted; ctx.font = `700 ${size * 0.17}px ${SANS}`;
+  spaced(ctx, 'GÜNLÜK TARİH', x + size * 1.2, y + size * 0.92, size * 0.03, 'left');
+}
+
+function drawSingle(canvas, e, date, format) {
+  const W = canvas.width, H = canvas.height, ctx = canvas.getContext('2d');
+  const story = format === 'story', wide = format === 'x';
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  const pad = wide ? 70 : 72;
+  const top = story ? 210 : pad;
+  const band = wide ? 0 : story ? 230 : 150;
+  // card
+  ctx.fillStyle = C.card; ctx.strokeStyle = C.border; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.roundRect(pad / 2, top - 30, W - pad, H - top + 30 - band - (story ? 230 : 36), 36); ctx.fill(); ctx.stroke();
+  brand(ctx, pad, top, wide ? 84 : 96);
+  ctx.fillStyle = C.accent; ctx.font = `800 ${wide ? 30 : 30}px ${SANS}`; ctx.textAlign = 'right';
+  ctx.fillText('@fiitarih', W - pad, top + 60);
+
+  const kicker = `TARİHTE BUGÜN · ${date.toLocaleUpperCase('tr-TR')}`;
+  if (wide) {
+    ctx.fillStyle = C.accent; ctx.font = `800 30px ${SANS}`;
+    spaced(ctx, kicker, pad, 300, 3, 'left');
+    ctx.font = `700 210px ${SERIF}`; ctx.textAlign = 'left';
+    ctx.fillText(fmtYear(e.year), pad - 6, 520);
+    ctx.fillStyle = C.accent; ctx.fillRect(pad, 570, 90, 8);
+    const box = fitText(ctx, e.title, `600 {s}px ${SERIF}`, 54, 34, 760, 7);
+    ctx.fillStyle = C.text; ctx.textAlign = 'left';
+    const lh = box.size * 1.3;
+    const y0 = 450 - (box.lines.length * lh) / 2 + box.size;
+    box.lines.forEach((l, i) => ctx.fillText(l, 770, y0 + i * lh));
+    ctx.fillStyle = C.muted; ctx.font = `600 26px ${SANS}`;
+    ctx.fillText(`Her gün 5 tarih bilmecesi · Fii · ${SITE}`, pad, H - 60);
+    return;
+  }
+
+  const cx = W / 2;
+  const mid = story ? 760 : 470;
+  ctx.fillStyle = C.accent; ctx.font = `800 ${story ? 38 : 32}px ${SANS}`;
+  spaced(ctx, kicker, cx, mid - (story ? 150 : 120), story ? 4 : 3);
+  ctx.font = `700 ${story ? 250 : 200}px ${SERIF}`; ctx.textAlign = 'center';
+  ctx.fillText(fmtYear(e.year), cx, mid + (story ? 90 : 70));
+  ctx.fillRect(cx - 55, mid + (story ? 140 : 110), 110, 8);
+  const box = fitText(ctx, e.title, `600 {s}px ${SERIF}`, story ? 66 : 58, 36, W - 2 * pad - 60, story ? 8 : 6);
+  ctx.fillStyle = C.text; ctx.textAlign = 'center';
+  const lh = box.size * 1.3;
+  box.lines.forEach((l, i) => ctx.fillText(l, cx, mid + (story ? 250 : 200) + i * lh));
+
+  // call to action
+  const by = story ? H - 230 - 200 : H - band;
+  ctx.fillStyle = C.accent;
+  if (story) { ctx.beginPath(); ctx.roundRect(pad, by, W - 2 * pad, 200, 36); ctx.fill(); } else ctx.fillRect(0, by, W, band);
+  ctx.fillStyle = C.white; ctx.textAlign = 'center';
+  ctx.font = `800 ${story ? 46 : 40}px ${SANS}`; ctx.fillText('Her gün 5 tarih bilmecesi', cx, by + (story ? 90 : 68));
+  ctx.font = `600 ${story ? 32 : 28}px ${SANS}`; ctx.globalAlpha = 0.9; ctx.fillText(`Fii · ${SITE}`, cx, by + (story ? 145 : 112)); ctx.globalAlpha = 1;
+}
+
+function drawList(canvas, events, date) {
+  const W = canvas.width, H = canvas.height, ctx = canvas.getContext('2d');
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  brand(ctx, 72, 72, 96);
+  ctx.fillStyle = C.accent; ctx.font = `800 30px ${SANS}`; ctx.textAlign = 'right'; ctx.fillText('@fiitarih', W - 72, 132);
+  ctx.fillStyle = C.text; ctx.font = `700 76px ${SERIF}`; ctx.textAlign = 'left';
+  ctx.fillText(`${date}'${LOCATIVE[MONTHS.indexOf(date.split(' ')[1])]}`, 72, 300); ctx.fillText('neler oldu?', 72, 385);
+  let y = 470;
+  for (const e of events.slice(0, 5)) {
+    ctx.fillStyle = C.card; ctx.strokeStyle = C.border; ctx.lineWidth = 2;
+    const box = fitText(ctx, e.title, `600 {s}px ${SERIF}`, 36, 26, W - 144 - 230, 3);
+    const h = Math.max(120, box.lines.length * box.size * 1.3 + 50);
+    if (y + h > H - 170) break;
+    ctx.beginPath(); ctx.roundRect(56, y, W - 112, h, 24); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.accent; ctx.font = `700 54px ${SERIF}`; ctx.textAlign = 'left';
+    ctx.fillText(fmtYear(e.year), 90, y + h / 2 + 18);
+    ctx.fillStyle = C.text; ctx.font = `600 ${box.size}px ${SERIF}`;
+    const lh = box.size * 1.3;
+    box.lines.forEach((l, i) => ctx.fillText(l, 300, y + (h - box.lines.length * lh) / 2 + box.size + i * lh - 4));
+    y += h + 18;
+  }
+  ctx.fillStyle = C.accent; ctx.fillRect(0, H - 130, W, 130);
+  ctx.fillStyle = C.white; ctx.textAlign = 'center';
+  const foot = `Her gün 5 tarih bilmecesi · Fii · ${SITE}`;
+  let fs = 38;
+  do { ctx.font = `800 ${fs}px ${SANS}`; } while (ctx.measureText(foot).width > W - 144 && --fs > 20);
+  ctx.fillText(foot, W / 2, H - 52);
+}
+
+const FORMATS = [
+  { id: 'post', label: 'Instagram gönderi 4:5', w: 1080, h: 1350 },
+  { id: 'story', label: 'Instagram hikâye 9:16', w: 1080, h: 1920 },
+  { id: 'x', label: 'X 16:9', w: 1600, h: 900 },
+  { id: 'list', label: 'Günün listesi 4:5', w: 1080, h: 1350 },
+];
+
+let postState = { events: [], chosen: null };
+$('postDate').value = iso(new Date());
+$('postDate').onchange = () => loaders.post();
+$('postLink').onchange = () => renderPost();
+
+loaders.post = async () => {
+  const { month, day } = md($('postDate').value);
+  const [events, featured] = await Promise.all([
+    rpc('on_this_day', { p_month: month, p_day: day, p_lang: 'tr', p_regions: ['TR', 'WORLD'] }),
+    rpc('featured_event', { p_month: month, p_day: day, p_lang: 'tr', p_regions: ['TR', 'WORLD'] }),
+  ]);
+  const tr = (e) => (e.regions ?? []).includes('TR');
+  postState.events = [...events].sort((a, b) => Number(tr(b)) - Number(tr(a)) || b.importance - a.importance);
+  postState.chosen = featured?.[0]?.id ?? postState.events[0]?.id ?? null;
+  $('postEvents').innerHTML = `<div class="card"><b>${dayLabel(month, day)}: ${events.length} olay</b>
+    <p class="muted" style="margin:4px 0 8px">Görsel için bir olay seç. ★ günün olayı. Hassas olaylar da listede; paylaşırken dilinizi gözden geçirin.</p>
+    ${postState.events.map((e) => `<label class="row" style="margin:4px 0;align-items:flex-start">
+      <input type="radio" name="pick" value="${e.id}" ${e.id === postState.chosen ? 'checked' : ''}>
+      <span><b>${esc(fmtYear(e.year))}</b> ${esc(e.title)} ${tr(e) ? '<span class="tag">TR</span>' : ''} ${e.id === featured?.[0]?.id ? '★' : ''}</span>
+    </label>`).join('') || '<p class="muted">Bu gün için olay yok.</p>'}</div>`;
+  $('postEvents').querySelectorAll('input[name=pick]').forEach((r) => (r.onchange = () => { postState.chosen = Number(r.value); renderPost(); }));
+  renderPost();
+};
+
+async function renderPost() {
+  await fontsReady;
+  if (!icon.complete) await new Promise((r) => { icon.onload = r; icon.onerror = r; });
+  const { month, day } = md($('postDate').value);
+  const date = dayLabel(month, day);
+  const e = postState.events.find((x) => x.id === postState.chosen);
+  $('previews').innerHTML = '';
+  if (!e) { $('caption').value = ''; return; }
+  for (const f of FORMATS) {
+    const fig = document.createElement('figure');
+    const canvas = document.createElement('canvas');
+    canvas.width = f.w; canvas.height = f.h;
+    if (f.id === 'list') drawList(canvas, postState.events, date); else drawSingle(canvas, e, date, f.id);
+    const cap = document.createElement('figcaption');
+    const name = `fii-${$('postDate').value.slice(5)}-${f.id}.png`;
+    cap.innerHTML = `<span>${f.label}</span>`;
+    const dl = document.createElement('button');
+    dl.textContent = 'İndir';
+    dl.onclick = () => canvas.toBlob((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }, 'image/png');
+    cap.append(dl);
+    fig.append(canvas, cap);
+    $('previews').append(fig);
+  }
+  const link = $('postLink').checked ? `\n\nHer gün 5 tarih bilmecesi için Fii: ${SITE}` : '';
+  $('caption').value = `📜 ${date} ${fmtYear(e.year)}\n\n${e.title}${link}\n\n#tarihtebugün #tarih #türktarihi #fiitarih`;
+}
+
+$('copyCaption').onclick = async () => {
+  await navigator.clipboard.writeText($('caption').value);
+  $('copied').textContent = 'Kopyalandı.';
+  setTimeout(() => ($('copied').textContent = ''), 2000);
+};
+
+start();
+</script>
+</body>
+</html>
